@@ -3,7 +3,7 @@ from .models import Guide, Comment
 from django.contrib.auth.models import User
 
 
-class PostSerializer(serializers.ModelSerializer):
+class GuideSerializer(serializers.ModelSerializer):
 
     creator = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
 
@@ -14,6 +14,37 @@ class PostSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
         }
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+
+    repeat_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "password",
+            "repeat_password",
+        ]
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        username = validated_data["username"]
+        password = validated_data["password"]
+        repeat_password = validated_data["password2"]
+        if password != repeat_password:
+            raise serializers.ValidationError({"password": "Пароли не совпадают"})
+        user = User(username=username)
+        user.set_password(password)
+        user.save()
+        return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "password", "username", "email")
 
 
 class CommentSerializer(serializers.ModelSerializer):

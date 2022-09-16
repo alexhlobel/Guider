@@ -7,6 +7,7 @@ from autoslug import AutoSlugField
 class Guide(models.Model):
     title = models.CharField(max_length=150, null=False, blank=False)
     text = RichTextUploadingField()
+    moderated = models.BooleanField(default=False)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(null=True, blank=True)
     slug = AutoSlugField(populate_from='title', unique=True, db_index=True)
