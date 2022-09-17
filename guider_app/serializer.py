@@ -5,11 +5,19 @@ from django.contrib.auth.models import User
 
 class GuideSerializer(serializers.ModelSerializer):
 
-    creator = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
-
     class Meta:
         model = Guide
-        fields = ("id", "title", "slug", "text", "image", "created_at", "creator")
+        fields = ("id", "title", "slug", "text", "image")
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
+
+
+class AdminGuideSerializer(GuideSerializer):
+    class Meta:
+        model = Guide
+        fields = ("id", "moderated", "title", "slug", "text", "image", "created_at")
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
@@ -32,13 +40,19 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         username = validated_data["username"]
         password = validated_data["password"]
-        repeat_password = validated_data["password2"]
+        repeat_password = validated_data["repeat_password"]
         if password != repeat_password:
             raise serializers.ValidationError({"password": "Пароли не совпадают"})
         user = User(username=username)
         user.set_password(password)
         user.save()
         return user
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "email")
 
 
 class UserSerializer(serializers.ModelSerializer):
