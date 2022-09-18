@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db.models.query import QuerySet
 from .models import Guide, Comment, User
 from .serializer import GuideSerializer, RegisterSerializer, UserSerializer, CommentSerializer, AdminGuideSerializer, \
-    UserDetailSerializer
+    UserDetailSerializer, GuideLikeSerializer, GuideDislikeSerializer
 from .permissions import ComplexGuidePermission
 from django.db.models import Q
 
@@ -48,7 +48,7 @@ class GuideViewSet(viewsets.ModelViewSet):
     serializer_class = GuideSerializer
     queryset = Guide.objects.all()
     permission_classes = [ComplexGuidePermission]
-    #lookup_field = 'slug'
+    lookup_field = 'slug'
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -90,4 +90,81 @@ class GuideViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# TODO: check images, create comments, create rating
+class CommentView(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        guide_slug = self.kwargs['guide_slug'].lower()
+        guide = Guide.objects.get(slug=guide_slug)
+        return Comment.objects.filter(guide=guide)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data['author'] = request.user
+        serializer.validated_data['guide'] = Guide.objects.get(slug=self.kwargs['guide_slug'].lower())
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class GuideRatingView(generics.UpdateAPIView):
+    queryset = Guide.objects.all()
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'slug'
+
+
+class GuideLikeView(GuideRatingView):
+    serializer_class = GuideLikeSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        guide = self.get_object()
+        serializer = self.get_serializer(guide, data=request.data, partial=partial)
+
+        if guide.likes.filter(id=request.user.id).exists():
+            guide.likes.remove(request.user)
+        else:
+            if guide.dislikes.filter(id=request.user.id).exists():
+                guide.dislikes.remove(request.user)
+            guide.likes.add(request.user)
+
+        context = {'likes_count': guide.total_likes}
+
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(guide, '_prefetched_objects_cache', None):
+            guide._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+
+class GuideDislikeView(GuideRatingView):
+    serializer_class = GuideDislikeSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        guide = self.get_object()
+        serializer = self.get_serializer(guide, data=request.data, partial=partial)
+
+        if guide.dislikes.filter(id=request.user.id).exists():
+            guide.dislikes.remove(request.user)
+        else:
+            if guide.likes.filter(id=request.user.id).exists():
+                guide.likes.remove(request.user)
+            guide.dislikes.add(request.user)
+
+        context = {'likes_count': guide.total_likes}
+
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(guide, '_prefetched_objects_cache', None):
+            guide._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+# TODO: check images, create rating

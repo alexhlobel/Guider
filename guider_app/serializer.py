@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 
 
 class GuideSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Guide
         fields = ("id", "title", "slug", "text", "image")
@@ -63,8 +62,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    author = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
-    guide = serializers.SlugRelatedField(slug_field="slug", queryset=Guide.objects.all())
+    author = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    guide = serializers.SlugRelatedField(slug_field="slug", read_only=True)
 
     class Meta:
         model = Comment
@@ -72,4 +71,28 @@ class CommentSerializer(serializers.ModelSerializer):
         lookup_field = 'id'
         extra_kwargs = {
             'url': {'lookup_field': 'id'}
+        }
+
+
+class GuideLikeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Guide
+        fields = ("id", "title", "slug", "text", "image", "created_at", "total_likes", "total_dislikes")
+        read_only_fields = ("id", "title", "slug", "text", "image", "created_at", "total_likes", "total_dislikes")
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
+
+
+class GuideDislikeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Guide
+        fields = ("id", "title", "slug", "text", "image", "created_at", "total_likes", "total_dislikes")
+        read_only_fields = ("id", "title", "slug", "text", "image", "created_at", "total_likes", "total_dislikes")
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
         }
