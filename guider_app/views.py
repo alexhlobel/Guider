@@ -167,4 +167,4 @@ class GuideDislikeView(GuideRatingView):
 
         return Response(serializer.data)
 
-# TODO: check images, create rating
+# TODO: check images
