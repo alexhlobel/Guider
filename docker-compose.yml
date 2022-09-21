@@ -1,0 +1,6 @@
+services:
+  django:
+    container_name: guidercontainer
+    build: .
+    ports:
+      - "8000:8000"

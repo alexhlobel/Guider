@@ -52,9 +52,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(style={'input_type': 'text'})
-    last_name = serializers.CharField(style={'input_type': 'text'})
-    email = serializers.EmailField(style={'input_type': 'text'})
+
+    first_name = serializers.CharField(style={'input_type': 'text'}, allow_blank=True)
+    last_name = serializers.CharField(style={'input_type': 'text'}, allow_blank=True)
+    email = serializers.EmailField(style={'input_type': 'text'}, allow_blank=True)
 
     class Meta:
         model = User

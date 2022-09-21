@@ -36,7 +36,7 @@ class UserUpdateAPIView(generics.GenericAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def patch(self, request):
+    def patch(self, request, *args, **kwargs):
         instance = get_object_or_404(User, id=request.user.id)
         serializer = self.serializer_class(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -131,8 +131,6 @@ class GuideLikeView(GuideRatingView):
                 guide.dislikes.remove(request.user)
             guide.likes.add(request.user)
 
-        context = {'likes_count': guide.total_likes}
-
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -156,8 +154,6 @@ class GuideDislikeView(GuideRatingView):
             if guide.likes.filter(id=request.user.id).exists():
                 guide.likes.remove(request.user)
             guide.dislikes.add(request.user)
-
-        context = {'likes_count': guide.total_likes}
 
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
