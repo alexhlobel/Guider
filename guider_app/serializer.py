@@ -25,7 +25,10 @@ class AdminGuideSerializer(GuideSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
 
-    repeat_password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True,
+                                     style={'input_type': 'password'})
+    repeat_password = serializers.CharField(write_only=True,
+                                            style={'input_type': 'password'})
 
     class Meta:
         model = User
@@ -49,6 +52,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(style={'input_type': 'text'})
+    last_name = serializers.CharField(style={'input_type': 'text'})
+    email = serializers.EmailField(style={'input_type': 'text'})
+
     class Meta:
         model = User
         fields = ("first_name", "last_name", "email")

@@ -26,7 +26,7 @@ class RegisterView(generics.GenericAPIView):
         })
 
 
-class UserUpdateAPIView(APIView):
+class UserUpdateAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserDetailSerializer
 
@@ -166,5 +166,3 @@ class GuideDislikeView(GuideRatingView):
             guide._prefetched_objects_cache = {}
 
         return Response(serializer.data)
-
-# TODO: check images
