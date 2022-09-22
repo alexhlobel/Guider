@@ -1,0 +1,221 @@
+[
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$390000$1BGKZWzP8OGBkFgy1MZjxn$aXWbzZFxh75dCO/2nWN5lC75ZDwu14oD8stcNIr4Omk=",
+        "last_login": "2022-09-17T21:37:46Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "admin@admin.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2022-09-16T06:45:48Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$390000$XVPeTB9oApBUdTLQpBcemn$AqC09ap8TwhC+lQD/xNMfCbk9EGl/n/Xp8cYCmrl0oQ=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "moderator1",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2022-09-18T17:32:02Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$390000$BfKXGHEwgxM7bc9n7YiTxR$uGZV8VPy7POP1UON+CUulc9dw68EVPvXO/XtNl6mS9Y=",
+        "last_login": "2022-09-21T12:19:00.926Z",
+        "is_superuser": false,
+        "username": "moderator2",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2022-09-21T12:16:39Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$390000$C8G7lhLhjXTaSUGdZ2kstm$eqH/PmdxsZYFL/oXbiXKTShvxoWPAzUuao9sYIpfCWw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "john_doe",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-09-21T18:45:31.497Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 6,
+    "fields": {
+        "password": "pbkdf2_sha256$390000$2a5PQscqIEjzYl9SinKdpE$QbdU7yPsj6nZK1aD4x7NVqmDVkin75mxNRihmxN3oMw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "nice_guy",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-09-21T18:46:09.509Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 7,
+    "fields": {
+        "password": "pbkdf2_sha256$390000$7Mvzv0Uy65Yo9BvntfXAKz$dOfTqlHsS1YXgCOolO80uvHkLzR5olpSKdfLNwF55+o=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "Talking_fish",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-09-21T18:47:14.279Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "guider_app.guide",
+    "pk": 6,
+    "fields": {
+        "title": "How to write a guide",
+        "text": "<p>1. Make sure you understand the subject.</p>\r\n\r\n<p>2. Write your guide structurized, step by step.</p>\r\n\r\n<p>3. Read what you wrote and try to imagine, what can go wrong during making something with your guide.</p>\r\n\r\n<p>4. Use illustrations, if necessary.</p>",
+        "moderated": true,
+        "created_at": "2022-09-21",
+        "updated_at": null,
+        "slug": "how-to-write-a-guide",
+        "creator": 1,
+        "image": "",
+        "likes": [
+            3,
+            5,
+            6,
+            7
+        ],
+        "dislikes": [
+            4
+        ]
+    }
+},
+{
+    "model": "guider_app.guide",
+    "pk": 7,
+    "fields": {
+        "title": "Bad guide",
+        "text": "<p>This is bad guide, that will not be moderated.</p>",
+        "moderated": false,
+        "created_at": "2022-09-21",
+        "updated_at": null,
+        "slug": "bad-guide",
+        "creator": 7,
+        "image": "",
+        "likes": [],
+        "dislikes": []
+    }
+},
+{
+    "model": "guider_app.guide",
+    "pk": 8,
+    "fields": {
+        "title": "Good guide",
+        "text": "<p>Hello, this is a good guide and it&#39;s gonna get moderated! To read it, follow the steps:</p>\r\n\r\n<p>1. Read step 1.</p>\r\n\r\n<p>2. Read step 2.</p>\r\n\r\n<p>3. Read step 3.</p>\r\n\r\n<p>Fantastic!</p>",
+        "moderated": true,
+        "created_at": "2022-09-21",
+        "updated_at": null,
+        "slug": "good-guide",
+        "creator": 6,
+        "image": "",
+        "likes": [
+            3,
+            5,
+            6
+        ],
+        "dislikes": [
+            7
+        ]
+    }
+},
+{
+    "model": "guider_app.comment",
+    "pk": 5,
+    "fields": {
+        "guide": 8,
+        "author": 7,
+        "text": "I don't like this one. That's horrible, I can't understand a word!",
+        "created_date": "2022-09-21T19:18:11.700Z"
+    }
+},
+{
+    "model": "guider_app.comment",
+    "pk": 6,
+    "fields": {
+        "guide": 8,
+        "author": 6,
+        "text": "Talking_fish, you are just jealous.",
+        "created_date": "2022-09-21T19:19:38.937Z"
+    }
+},
+{
+    "model": "guider_app.comment",
+    "pk": 7,
+    "fields": {
+        "guide": 6,
+        "author": 7,
+        "text": "Thanks!",
+        "created_date": "2022-09-21T19:20:31.685Z"
+    }
+},
+{
+    "model": "guider_app.comment",
+    "pk": 8,
+    "fields": {
+        "guide": 6,
+        "author": 6,
+        "text": "Nice!",
+        "created_date": "2022-09-21T19:20:51.707Z"
+    }
+},
+{
+    "model": "guider_app.comment",
+    "pk": 9,
+    "fields": {
+        "guide": 6,
+        "author": 5,
+        "text": "I got it.",
+        "created_date": "2022-09-21T19:21:20.513Z"
+    }
+}
+]
