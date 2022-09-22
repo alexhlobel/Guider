@@ -1,13 +1,12 @@
 from rest_framework import viewsets
-from rest_framework.views import APIView
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.db.models.query import QuerySet
 from .models import Guide, Comment, User
-from .serializer import GuideSerializer, RegisterSerializer, UserSerializer, CommentSerializer, AdminGuideSerializer, \
-    UserDetailSerializer, GuideLikeSerializer, GuideDislikeSerializer
+from .serializer import GuideSerializer, RegisterSerializer, UserSerializer, \
+    CommentSerializer, AdminGuideSerializer, UserDetailSerializer,\
+    GuideLikeSerializer, GuideDislikeSerializer
 from .permissions import ComplexGuidePermission
 from django.db.models import Q
 
@@ -16,12 +15,13 @@ class RegisterView(generics.GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = RegisterSerializer
 
-    def post(self, request, *args,  **kwargs):
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "user": UserSerializer(user,
+                                   context=self.get_serializer_context()).data,
             "message": "User has been successfully created",
         })
 
@@ -56,18 +56,22 @@ class GuideViewSet(viewsets.ModelViewSet):
         serializer.validated_data['creator'] = request.user
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data,
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
 
     def list(self, request, *args, **kwargs):
         if not request.user.is_staff:
-            self.queryset = Guide.objects.filter(Q(moderated=True) | Q(creator_id=request.user.id))
+            self.queryset = Guide.objects.filter(Q(moderated=True) |
+                                                 Q(creator_id=request.user.id))
         else:
             self.serializer_class = AdminGuideSerializer
         return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         if not request.user.is_staff:
-            self.queryset = Guide.objects.filter(Q(moderated=True) | Q(creator_id=request.user.id))
+            self.queryset = Guide.objects.filter(Q(moderated=True) |
+                                                 Q(creator_id=request.user.id))
         else:
             self.serializer_class = AdminGuideSerializer
         return super().retrieve(request, *args, **kwargs)
@@ -79,7 +83,9 @@ class GuideViewSet(viewsets.ModelViewSet):
 
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance,
+                                         data=request.data,
+                                         partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['moderated'] = False
         self.perform_update(serializer)
@@ -104,10 +110,13 @@ class CommentView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['author'] = request.user
-        serializer.validated_data['guide'] = Guide.objects.get(slug=self.kwargs['guide_slug'].lower())
+        guide = Guide.objects.get(slug=self.kwargs['guide_slug'].lower())
+        serializer.validated_data['guide'] = guide
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data,
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
 
 
 class GuideRatingView(generics.UpdateAPIView):
@@ -122,7 +131,9 @@ class GuideLikeView(GuideRatingView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         guide = self.get_object()
-        serializer = self.get_serializer(guide, data=request.data, partial=partial)
+        serializer = self.get_serializer(guide,
+                                         data=request.data,
+                                         partial=partial)
 
         if guide.likes.filter(id=request.user.id).exists():
             guide.likes.remove(request.user)
@@ -146,7 +157,9 @@ class GuideDislikeView(GuideRatingView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         guide = self.get_object()
-        serializer = self.get_serializer(guide, data=request.data, partial=partial)
+        serializer = self.get_serializer(guide,
+                                         data=request.data,
+                                         partial=partial)
 
         if guide.dislikes.filter(id=request.user.id).exists():
             guide.dislikes.remove(request.user)
