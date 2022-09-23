@@ -95,10 +95,10 @@ DATABASES = {
     'default': {
         'ENGINE': config('DJANGO_DB_ENGINE', default='django.db.backends.sqlite3'),
         'NAME': config('DJANGO_DB_NAME', default='db.sqlite3'),
-        'USER': config('DJANGO_DB_USER'),
-        'PASSWORD': config('DJANGO_DB_PASSWORD'),
-        'HOST': config('DJANGO_DB_HOST'),
-        'PORT': config('DJANGO_DB_PORT'),
+        'USER': config('DJANGO_DB_USER', default=None),
+        'PASSWORD': config('DJANGO_DB_PASSWORD', default=None),
+        'HOST': config('DJANGO_DB_HOST', default=None),
+        'PORT': config('DJANGO_DB_PORT', default=None),
     }
 }
 
