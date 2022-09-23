@@ -4,9 +4,11 @@ from django.contrib.auth.models import User
 
 
 class GuideSerializer(serializers.ModelSerializer):
+    creator = serializers.CharField(source='creator.username', read_only=True)
+
     class Meta:
         model = Guide
-        fields = ("id", "title", "slug", "text", "image")
+        fields = ("creator", "title", "slug", "text", "image")
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
@@ -14,9 +16,11 @@ class GuideSerializer(serializers.ModelSerializer):
 
 
 class AdminGuideSerializer(GuideSerializer):
+    creator = serializers.CharField(source='creator.username', read_only=True)
+
     class Meta:
         model = Guide
-        fields = ("id", "moderated", "title", "slug",
+        fields = ("id", "creator", "moderated", "title", "slug",
                   "text", "image", "created_at")
         lookup_field = 'slug'
         extra_kwargs = {
