@@ -1,8 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters, pagination
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Guide, Comment, User
 from .serializer import GuideSerializer, RegisterSerializer, UserSerializer, \
     CommentSerializer, AdminGuideSerializer, UserDetailSerializer,\
@@ -48,9 +49,16 @@ class GuideViewSet(viewsets.ModelViewSet):
     serializer_class = GuideSerializer
     queryset = Guide.objects.all()
     permission_classes = [ComplexGuidePermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'creator__username']
+    filterset_fields = ['creator', 'moderated']
+    ordering_fields = ['created_at', 'creator', 'title']
+    pagination_class = pagination.PageNumberPagination
     lookup_field = 'slug'
 
     def create(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            self.serializer_class = AdminGuideSerializer
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['creator'] = request.user
@@ -96,14 +104,19 @@ class GuideViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class CommentPagination(pagination.PageNumberPagination):
+    page_size = 15
+
+
 class CommentView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CommentPagination
 
     def get_queryset(self):
         guide_slug = self.kwargs['guide_slug'].lower()
-        guide = Guide.objects.get(slug=guide_slug)
+        guide = get_object_or_404(Guide, slug=guide_slug)
         return Comment.objects.filter(guide=guide)
 
     def create(self, request, *args, **kwargs):
