@@ -51,7 +51,7 @@ Then install the dependencies:
 ```
 or just
 ```sh
-(<your_env_name>)$ make install req
+(<your_env_name>)$ make install
 ```
 ___
 In order to connect to your PostgreSQL database write your database credentials as environment variables in .env file.

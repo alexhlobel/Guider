@@ -1,27 +1,27 @@
 venv:
-    pip install virtualenv
-    virtualenv -p /usr/bin/python3.9 venv
-    source venv/bin/activate
+	pip install virtualenv
+	virtualenv -p /usr/bin/python3.9 venv
+	source venv/bin/activate
 
-install req:
-    pip install -r requirements.txt
+install:
+	pip install -r requirements.txt
 
-freeze req:
-    pip freeze > requirements.txt
+freeze:
+	pip freeze > requirements.txt
 
 run:
-    python manage.py runserver
+	python manage.py runserver
 
 migrate:
-    python manage.py makemigrations
-    python manage.py migrate
+	python manage.py makemigrations
+	python manage.py migrate
 
 superuser:
-    python manage.py createsuperuser
+	python manage.py createsuperuser
 
 deploy:
-    docker-compose build
-    docker-compose up -d
+	docker-compose build
+	docker-compose up -d
 
 heroku:
-    git push heroku main
+	git push heroku main

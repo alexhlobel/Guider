@@ -8,7 +8,8 @@ class GuideSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Guide
-        fields = ("creator", "title", "slug", "text", "image")
+        fields = ("creator", "title", "slug", "text", "image", "total_likes", "total_dislikes")
+        read_only_fields = ("total_likes", "total_dislikes",)
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
@@ -21,7 +22,8 @@ class AdminGuideSerializer(GuideSerializer):
     class Meta:
         model = Guide
         fields = ("id", "creator", "moderated", "title", "slug",
-                  "text", "image", "created_at")
+                  "text", "image", "created_at", "total_likes", "total_dislikes",)
+        read_only_fields = ("total_likes", "total_dislikes",)
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
