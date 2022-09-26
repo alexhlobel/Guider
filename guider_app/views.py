@@ -17,6 +17,9 @@ class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        POST method to register a new user. Login, password and correct repeat of a password required.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -32,12 +35,19 @@ class UserUpdateAPIView(generics.GenericAPIView):
     serializer_class = UserDetailSerializer
 
     def get(self, request):
+        """
+        GET method to get user instance, that would be detailed.
+        """
         serializer = self.serializer_class(
             get_object_or_404(User, id=request.user.id)
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
+        """
+        PATCH method to add info to fields 'email', 'first_name', 'last_name'
+        to user, that has been got by GET method.
+        """
         instance = get_object_or_404(User, id=request.user.id)
         serializer = self.serializer_class(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -46,6 +56,10 @@ class UserUpdateAPIView(generics.GenericAPIView):
 
 
 class GuideViewSet(viewsets.ModelViewSet):
+    """
+    PATCH behavior is described in PUT method.
+    DELETE is usual, but is allowed only to admin and moderators.
+    """
     serializer_class = GuideSerializer
     queryset = Guide.objects.all()
     permission_classes = [ComplexGuidePermission]
@@ -57,6 +71,10 @@ class GuideViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
     def create(self, request, *args, **kwargs):
+        """
+        POST method, that allows authorized users to create a guide.
+        Admin and moderators (staff) can create moderated guides at once.
+        """
         if request.user.is_staff:
             self.serializer_class = AdminGuideSerializer
         serializer = self.get_serializer(data=request.data)
@@ -69,6 +87,11 @@ class GuideViewSet(viewsets.ModelViewSet):
                         headers=headers)
 
     def list(self, request, *args, **kwargs):
+        """
+        GET method, that returns list of only moderated guides
+        for usual authorized and unauthorized users.
+        Staff can see moderated and non-moderated guides.
+        """
         if not request.user.is_staff:
             self.queryset = Guide.objects.filter(Q(moderated=True) |
                                                  Q(creator_id=request.user.id))
@@ -77,6 +100,11 @@ class GuideViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
+        """
+        GET method, that returns one of moderated guides
+        for usual authorized and unauthorized users by given slug.
+        Staff can see moderated and non-moderated guides.
+        """
         if not request.user.is_staff:
             self.queryset = Guide.objects.filter(Q(moderated=True) |
                                                  Q(creator_id=request.user.id))
@@ -85,6 +113,11 @@ class GuideViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
+        """
+        PUT or PATCH method, that lets usual authorized users make corrections to a guide,
+        previously got by retrieve method. After corrections a guide requires moderation.
+        Staff can make corrections to any guide and moderate it.
+        """
         if request.user.is_staff:
             self.serializer_class = AdminGuideSerializer
             return super().update(request, *args, **kwargs)
@@ -109,17 +142,27 @@ class CommentPagination(pagination.PageNumberPagination):
 
 
 class CommentView(generics.ListCreateAPIView):
+    """
+    A View for creating and reading comments under a guide.
+    Only authorized users can see and write comments.
+    """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CommentPagination
 
     def get_queryset(self):
+        """
+        Returns a queryset of comments, that belongs to one guide.
+        """
         guide_slug = self.kwargs['guide_slug'].lower()
         guide = get_object_or_404(Guide, slug=guide_slug)
         return Comment.objects.filter(guide=guide)
 
     def create(self, request, *args, **kwargs):
+        """
+        POST method, that creates a comment under a guide. Only authorized users can write comments.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['author'] = request.user
@@ -139,6 +182,10 @@ class GuideRatingView(generics.UpdateAPIView):
 
 
 class GuideLikeView(GuideRatingView):
+    """
+    A view with only PUT or PATCH method, that allows to rate a guide with a like.
+    A user can place either like or dislike.
+    """
     serializer_class = GuideLikeSerializer
 
     def update(self, request, *args, **kwargs):
@@ -165,6 +212,10 @@ class GuideLikeView(GuideRatingView):
 
 
 class GuideDislikeView(GuideRatingView):
+    """
+    A view with only PUT or PATCH method, that allows to rate a guide with a dislike.
+    A user can place either like or dislike.
+    """
     serializer_class = GuideDislikeSerializer
 
     def update(self, request, *args, **kwargs):
